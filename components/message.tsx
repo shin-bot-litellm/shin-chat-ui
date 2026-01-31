@@ -5,6 +5,9 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
+
+// Type assertion for the style object
+const codeStyle = oneDark as { [key: string]: React.CSSProperties };
 import { User, Sparkles, Copy, Check } from "lucide-react";
 import { useState } from "react";
 
@@ -59,7 +62,7 @@ export default function Message({ role, content, isStreaming }: MessageProps) {
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
-                  code({ node, className, children, ...props }) {
+                  code({ className, children, ...props }) {
                     const match = /language-(\w+)/.exec(className || "");
                     const codeString = String(children).replace(/\n$/, "");
                     const isInline = !match && !codeString.includes("\n");
@@ -92,7 +95,7 @@ export default function Message({ role, content, isStreaming }: MessageProps) {
                           </div>
                         ) : null}
                         <SyntaxHighlighter
-                          style={oneDark}
+                          style={codeStyle}
                           language={match ? match[1] : "text"}
                           PreTag="div"
                           customStyle={{
@@ -100,7 +103,6 @@ export default function Message({ role, content, isStreaming }: MessageProps) {
                             borderRadius: match ? "0 0 0.5rem 0.5rem" : "0.5rem",
                             fontSize: "0.875rem",
                           }}
-                          {...props}
                         >
                           {codeString}
                         </SyntaxHighlighter>
